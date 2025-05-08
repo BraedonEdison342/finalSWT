@@ -1,0 +1,81 @@
+version '3.8'
+
+services
+
+  # ----------------------------
+  # Frontend (Client‐side)
+  # ----------------------------
+  frontend
+    # You can either use the official Node image to build a ReactVueAngular app,
+    # or point at a prebuilt image (e.g. myorgreact‐applatest).
+    build
+      context .frontend
+      dockerfile Dockerfile
+    image myorgfrontendlatest
+    environment
+      - NODE_ENV=production
+    volumes
+      - .frontendsrcappsrc         # Optional mount for live‐reload in development
+      - .frontendpublicapppublic
+      - appnode_modules
+    ports
+      - '30003000'                     # Expose ReactVue dev server
+    depends_on
+      - backend
+
+  # ----------------------------
+  # Backend (Server‐side)
+  # ----------------------------
+  backend
+    build
+      context .backend
+      dockerfile Dockerfile
+    image myorgbackendlatest
+    environment
+      # Example environment variables for Express + JWT + DB
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodbdb27017spaceship
+      - JWT_SECRET=${JWT_SECRET}
+    volumes
+      - .backendsrcusrsrcappsrc   # Optional mount for live‐reload
+      - usrsrcappnode_modules
+    ports
+      - '50005000'
+    depends_on
+      - db
+
+  # ----------------------------
+  # Database
+  # ----------------------------
+  db
+    image mongo4.4
+    container_name spaceship-mongo
+    restart unless-stopped
+    volumes
+      - db-datadatadb
+    ports
+      - '2701727017'
+
+  # ----------------------------
+  # Reverse Proxy  Static Host
+  # ----------------------------
+  nginx
+    image nginxlatest
+    container_name spaceship-nginx
+    restart unless-stopped
+    ports
+      - '8080'
+    volumes
+      - .nginxnginx.confetcnginxnginx.confro
+      - .frontendbuildusrsharenginxhtml  # Serve production frontend build
+    depends_on
+      - frontend
+      - backend
+
+volumes
+  db-data
+
+networks
+  default
+    driver bridge
