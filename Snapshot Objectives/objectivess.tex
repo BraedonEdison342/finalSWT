@@ -1,0 +1,101 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{enumitem}
+
+\begin{document}
+
+\section*{Snapshot Objectives}
+
+This document explains the purpose and goals of each development snapshot, and summarizes the features added or tasks accomplished at each stage.
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+
+  \item \textbf{Start Objective}\\
+    \emph{Goals:}  
+    \begin{itemize}
+      \item Establish the initial Software Design Document (SDD) structure.
+      \item Define core pipeline stages: Data Ingestion, Preprocessing, Model Training, Prediction, Output \& Reporting.
+      \item Draft sections: Introduction, System Overview, Design Considerations, Architectural Design, Detailed Design, Requirements Mapping, Appendices.
+      \item Populate acronyms table with AI/ML terms and Titanic-specific definitions.
+      \item Ensure the document serves as a clear baseline for all subsequent enhancements.
+    \end{itemize}
+
+  \item \textbf{1\textsuperscript{st} Checkpoint Objective}\\
+    \emph{Reflection on Start:}  
+    \begin{itemize}
+      \item The SDD structure and basic pipeline were successfully drafted.
+      \item Core modules (data ingestion through prediction) were detailed.
+    \end{itemize}
+    \emph{New Tasks Added:}
+    \begin{itemize}
+      \item \textbf{Configuration Management:}  
+        \begin{itemize}
+          \item Added a new pipeline stage to read runtime parameters (thresholds, file paths, hyperparameters) from an external JSON “config.json.”
+          \item Introduced “CFG” in the acronyms table.
+        \end{itemize}
+      \item \textbf{Error Logging \& Alerting:}  
+        \begin{itemize}
+          \item Expanded Monitoring \& Logging section to include centralized error logging with Slack/email alerts on failures.
+        \end{itemize}
+      \item \textbf{Train/Validation Split Adjustment:}  
+        \begin{itemize}
+          \item Updated model training from a 10\%/10\% split to an 80\%/20\% split for better generalization.
+        \end{itemize}
+    \end{itemize}
+
+  \item \textbf{2\textsuperscript{nd} Checkpoint Objective}\\
+    \emph{Reflection on 1\textsuperscript{st} Checkpoint:}  
+    \begin{itemize}
+      \item Configuration management and logging features are integrated into the SDD.
+      \item The training split and thresholding via JSON file are documented.
+    \end{itemize}
+    \emph{New Tasks Added:}
+    \begin{itemize}
+      \item \textbf{Model Explainability (SHAP):}
+        \begin{itemize}
+          \item Added a dedicated Explainability Module using SHAP to compute global and local feature‐importance.
+          \item Specified SHAP summary plots and force‐plot HTML report generation.
+          \item Included “SHAP” in the acronyms table.
+        \end{itemize}
+      \item \textbf{Interactive Dashboard (Dash):}
+        \begin{itemize}
+          \item Introduced a Dashboard Module using Dash by Plotly.
+          \item Defined layout: summary cards, time‐series charts, filterable tables, threshold sliders.
+          \item Specified caching (flask\_caching) and export capabilities (CSV/PNG).
+          \item Added “DASH” to the acronyms table.
+        \end{itemize}
+    \end{itemize}
+
+  \item \textbf{Due Date Checkpoint Objective}\\
+    \emph{Reflection on 2\textsuperscript{nd} Checkpoint:}  
+    \begin{itemize}
+      \item The SDD now covers the full pipeline: ingestion, preprocessing, training, prediction, configuration, logging, explainability, and dashboard.
+      \item All major modules have been specified in detail, with acronyms updated.
+    \end{itemize}
+    \emph{Future Work:}
+    \begin{itemize}
+      \item \textbf{Architecture Diagrams:}  
+        \begin{itemize}
+          \item Add visual UML/component diagrams in the Architectural Design section.
+        \end{itemize}
+      \item \textbf{CI/CD Pipelines:}  
+        \begin{itemize}
+          \item Define end‐to‐end GitHub Actions/GitLab CI workflows for build, test, deployment.
+        \end{itemize}
+      \item \textbf{Monitoring Dashboards:}  
+        \begin{itemize}
+          \item Extend Dash app or integrate Grafana for real‐time metrics and logs.
+        \end{itemize}
+      \item \textbf{Retraining Trigger Automation:}  
+        \begin{itemize}
+          \item Automate model retraining and SHAP regeneration when new data arrives or performance degrades.
+        \end{itemize}
+      \item \textbf{Performance Benchmarking:}  
+        \begin{itemize}
+          \item Document latency, throughput, and resource usage for training, inference, and dashboard.
+        \end{itemize}
+    \end{itemize}
+
+\end{enumerate}
+
+\end{document}
