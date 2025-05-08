@@ -27,7 +27,16 @@
 This document defines the functional and non-functional requirements for a machine learning–based system designed to predict whether a passenger aboard the Spaceship Titanic was transported to another dimension due to a spacetime anomaly.
 
 \subsection{Scope}
-The system will ingest spaceship passenger data, preprocess it, train a model using historical outcomes, and generate predictions for new data. Predictions are aimed at supporting interstellar rescue teams.
+The system will:
+\begin{itemize}
+  \item Ingest spaceship passenger data in CSV format.
+  \item Preprocess data (handle missing values, encode categorical variables).
+  \item Train a machine learning model using historical labeled outcomes.
+  \item Generate predictions for new passenger records.
+  \item Read runtime parameters (classification threshold, file paths, hyperparameters) from an external configuration file.
+  \item Log errors and send alerts (e.g., Slack or email) on critical failures.
+  \item Export predictions to CSV for downstream integration.
+\end{itemize}
 
 \subsection{Definitions, Acronyms, and Abbreviations}
 \begin{table}[h!]
@@ -39,7 +48,6 @@ The system will ingest spaceship passenger data, preprocess it, train a model us
   AI    & Artificial Intelligence                  & Systems that simulate human intelligence in machines. \\
   ML    & Machine Learning                         & A subset of AI that enables models to learn from data. \\
   CSV   & Comma-Separated Values                   & Common format for structured tabular data files. \\
-  EDA   & Exploratory Data Analysis                & The process of visually and statistically analyzing data. \\
   CFG   & Configuration File                       & A JSON or YAML file specifying runtime parameters. \\
   API   & Application Programming Interface        & A set of rules allowing software components to communicate. \\
   SRS   & Software Requirements Specification      & A document that describes what the system should do. \\
@@ -56,88 +64,101 @@ The system will ingest spaceship passenger data, preprocess it, train a model us
 \end{itemize}
 
 \subsection{Overview}
-The rest of the document outlines detailed requirements including system features, interfaces, constraints, and acceptance criteria.
+The remainder of this document specifies detailed functional and non-functional requirements, external interfaces, and acceptance criteria.
 
 \section{Overall Description}
 \subsection{Product Perspective}
-This is a standalone prediction system utilizing machine learning to support interstellar anomaly investigations.
+This is a standalone AI prediction system that supports interstellar rescue operations by classifying which passengers were transported during a spacetime anomaly.
 
 \subsection{Product Functions}
-\begin{itemize}
-  \item Load passenger data (CSV).
-  \item Preprocess data: handle missing values, encode categorical variables.
-  \item Train ML model using labeled data.
-  \item Predict transported status for new passengers.
-  \item Read runtime parameters from a configuration file.
-  \item Log errors and send alerts on failures.
-  \item Display or export results.
-\end{itemize}
+\begin{enumerate}[label=PF\arabic*:]
+  \item Load passenger data from a CSV file.
+  \item Preprocess data:
+    \begin{itemize}
+      \item Impute missing values.
+      \item Encode categorical variables (e.g., one-hot encoding).
+      \item Normalize or scale features if necessary.
+    \end{itemize}
+  \item Train a supervised classification model (e.g., XGBoost).
+  \item Split data into training (80 \%) and validation (20 \%) sets.
+  \item Evaluate model performance using metrics (accuracy, ROC-AUC).
+  \item Read configuration parameters (threshold, file paths, hyperparameters) from an external JSON configuration file named \texttt{config.json}.
+  \item Generate transport predictions for unseen data.
+  \item Log all processing steps and errors; on critical failures send alerts via Slack or email.
+  \item Export prediction results to a CSV file with columns: PassengerID, Probability, PredictedLabel.
+\end{enumerate}
 
 \subsection{User Classes and Characteristics}
 \begin{itemize}
-  \item \textbf{Data Scientists:} Maintain the model pipeline.
-  \item \textbf{Rescue Analysts:} Use predictions to prioritize recovery.
-  \item \textbf{Developers:} Update system as new features or models are added.
+  \item \textbf{Data Scientists:} Configure and maintain model training pipeline.
+  \item \textbf{Rescue Analysts:} Use exported predictions to plan rescue missions.
+  \item \textbf{Developers:} Extend and deploy system; add new features.
 \end{itemize}
 
 \subsection{Operating Environment}
 \begin{itemize}
-  \item Google Colab / Jupyter Notebook
-  \item Python 3.x
-  \item Compatible browser for UI (Chrome, Firefox)
+  \item Google Colab or equivalent Jupyter environment.
+  \item Python 3.8+ runtime.
+  \item Internet access for cloud-based environments.
 \end{itemize}
 
 \subsection{Design and Implementation Constraints}
 \begin{itemize}
-  \item Free-tier limitations on Google Colab (GPU session timeouts)
-  \item Data privacy and interstellar regulation compliance
+  \item Limited GPU/TPU session time on free Colab.
+  \item Compliance with interstellar data privacy regulations.
+  \item PEP 8 coding standards enforced.
 \end{itemize}
 
 \subsection{User Documentation}
 \begin{itemize}
-  \item README file in GitHub repository
-  \item Markdown or PDF user guide on how to run the model and configure via JSON
+  \item README.md with setup instructions.
+  \item User guide describing how to edit \texttt{config.json}, run training, and execute predictions.
 \end{itemize}
 
 \subsection{Assumptions and Dependencies}
 \begin{itemize}
-  \item The Kaggle data is assumed to be representative and labeled accurately.
-  \item Internet access is available for Colab usage.
-  \item \texttt{config.json} is present and correctly formatted.
+  \item Input CSV files conform to the specified schema.
+  \item \texttt{config.json} is correctly formatted and located in the working directory.
+  \item Email/Slack credentials are configured for alerting.
 \end{itemize}
 
 \section{Specific Requirements}
 \subsection{Functional Requirements}
-\begin{itemize}
-  \item \textbf{FR1:} System must load a CSV dataset containing passenger data.
-  \item \textbf{FR2:} System must clean and preprocess data for missing or inconsistent entries.
-  \item \textbf{FR3:} System must train a classification model.
-  \item \textbf{FR4:} System must output predictions on whether a passenger was transported.
-  \item \textbf{FR5:} System must export predictions to a CSV file.
-  \item \textbf{FR6:} System must read classification threshold, file paths, and hyperparameters from an external configuration file (`config.json`).
-  \item \textbf{FR7:} System must log errors and send alerts (e.g., via Slack or email) when critical failures occur.
-\end{itemize}
+\begin{enumerate}[label=FR\arabic*:]
+  \item System shall load a CSV file containing passenger records (FR1).
+  \item System shall preprocess data: impute missing values, encode categorical features (FR2).
+  \item System shall split data into 80 \% training and 20 \% validation sets (FR3).
+  \item System shall train a classification model and save the model artifact (FR4).
+  \item System shall read runtime parameters from \texttt{config.json}, including classification threshold, file paths, hyperparameters (FR5).
+  \item System shall generate transport probability and label for new passenger data (FR6).
+  \item System shall export predictions to a CSV file (FR7).
+  \item System shall log all processing steps and errors; send alerts for critical failures (FR8).
+\end{enumerate}
 
 \subsection{Non-Functional Requirements}
-\begin{itemize}
-  \item \textbf{NFR1:} Predictions must complete within 60 seconds for datasets under 1,000 rows.
-  \item \textbf{NFR2:} Model accuracy must exceed 80 % AUC on validation data.
-  \item \textbf{NFR3:} Data must remain secure and anonymized throughout processing.
-  \item \textbf{NFR4:} Code must follow PEP8 style guidelines.
-  \item \textbf{NFR5:} All critical errors must be logged and alerts sent within 5 minutes of detection.
-\end{itemize}
+\begin{enumerate}[label=NFR\arabic*:]
+  \item Predictions for datasets under 1,000 records must complete within 60 seconds (NFR1).
+  \item Model validation AUC must exceed 0.80 on the validation set (NFR2).
+  \item Sensitive passenger data must be anonymized during processing (NFR3).
+  \item All code shall conform to PEP 8 style guidelines (NFR4).
+  \item Critical errors shall be logged and alerts sent within 5 minutes of detection (NFR5).
+\end{enumerate}
 
 \subsection{External Interface Requirements}
 \begin{itemize}
-  \item \textbf{User Interface:} Simple CLI or minimal web UI to specify input file and view status.
-  \item \textbf{Software Interfaces:} Python 3.x, ML libraries, Slack/email APIs for alerts.
+  \item \textbf{User Interface:} Command‐line interface to start training and prediction jobs.
+  \item \textbf{Software Interfaces:}  
+    \begin{itemize}
+      \item Python 3.x libraries: \texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}, \texttt{json}, \texttt{logging}.
+      \item Slack or SMTP for alert notifications.
+    \end{itemize}
 \end{itemize}
 
 \section{Appendices}
 \subsection{Appendix A: Future Enhancements}
 \begin{itemize}
-  \item Integrate with a richer web app for live input/output.
-  \item Add Docker deployment and orchestration definitions.
+  \item Docker-compose definitions for full stack deployment.
+  \item Integration of model explainability (e.g., SHAP).
 \end{itemize}
 
 \subsection{Appendix B: Revision History}
