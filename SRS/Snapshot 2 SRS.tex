@@ -1,0 +1,154 @@
+\documentclass[15pt]{article}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Software Requirements Specification}
+\lhead{Titanic Space Ship AI Model}
+\rfoot{\thepage}
+
+\title{Software Requirements Specification (SRS)\\\large Spaceship Titanic AI Prediction System}
+\author{Team Name or Author(s)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+\subsection{Purpose}
+This document defines the functional and non-functional requirements for a machine learning–based system designed to predict whether a passenger aboard the Spaceship Titanic was transported to another dimension due to a spacetime anomaly.
+
+\subsection{Scope}
+The system will ingest spaceship passenger data, preprocess it, train a model using historical outcomes, and generate predictions for new data. Predictions are aimed at supporting interstellar rescue teams.
+
+\subsection{Definitions, Acronyms, and Abbreviations}
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|l|l|p{8cm}|}
+  \hline
+  \textbf{Acronym} & \textbf{Full Form}                       & \textbf{Description} \\
+  \hline
+  AI    & Artificial Intelligence                  & Systems that simulate human intelligence in machines. \\
+  ML    & Machine Learning                         & A subset of AI that enables models to learn from data. \\
+  CSV   & Comma-Separated Values                   & Common format for structured tabular data files. \\
+  EDA   & Exploratory Data Analysis                & The process of visually and statistically analyzing data. \\
+  CFG   & Configuration File                       & A JSON or YAML file specifying runtime parameters. \\
+  API   & Application Programming Interface        & A set of rules allowing software components to communicate. \\
+  SRS   & Software Requirements Specification      & A document that describes what the system should do. \\
+  \hline
+  \end{tabular}
+  \caption{Acronyms and Abbreviations}
+\end{table}
+
+\subsection{References}
+\begin{itemize}
+  \item Kaggle Competition: \url{https://www.kaggle.com/competitions/spaceship-titanic/overview}
+  \item IEEE Standard for SRS: IEEE 830
+  \item Python Library Docs: \texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}
+\end{itemize}
+
+\subsection{Overview}
+The rest of the document outlines detailed requirements including system features, interfaces, constraints, and acceptance criteria.
+
+\section{Overall Description}
+\subsection{Product Perspective}
+This is a standalone prediction system utilizing machine learning to support interstellar anomaly investigations.
+
+\subsection{Product Functions}
+\begin{itemize}
+  \item Load passenger data (CSV).
+  \item Preprocess data: handle missing values, encode categorical variables.
+  \item Train ML model using labeled data.
+  \item Predict transported status for new passengers.
+  \item Read runtime parameters from a configuration file.
+  \item Log errors and send alerts on failures.
+  \item Display or export results.
+\end{itemize}
+
+\subsection{User Classes and Characteristics}
+\begin{itemize}
+  \item \textbf{Data Scientists:} Maintain the model pipeline.
+  \item \textbf{Rescue Analysts:} Use predictions to prioritize recovery.
+  \item \textbf{Developers:} Update system as new features or models are added.
+\end{itemize}
+
+\subsection{Operating Environment}
+\begin{itemize}
+  \item Google Colab / Jupyter Notebook
+  \item Python 3.x
+  \item Compatible browser for UI (Chrome, Firefox)
+\end{itemize}
+
+\subsection{Design and Implementation Constraints}
+\begin{itemize}
+  \item Free-tier limitations on Google Colab (GPU session timeouts)
+  \item Data privacy and interstellar regulation compliance
+\end{itemize}
+
+\subsection{User Documentation}
+\begin{itemize}
+  \item README file in GitHub repository
+  \item Markdown or PDF user guide on how to run the model and configure via JSON
+\end{itemize}
+
+\subsection{Assumptions and Dependencies}
+\begin{itemize}
+  \item The Kaggle data is assumed to be representative and labeled accurately.
+  \item Internet access is available for Colab usage.
+  \item \texttt{config.json} is present and correctly formatted.
+\end{itemize}
+
+\section{Specific Requirements}
+\subsection{Functional Requirements}
+\begin{itemize}
+  \item \textbf{FR1:} System must load a CSV dataset containing passenger data.
+  \item \textbf{FR2:} System must clean and preprocess data for missing or inconsistent entries.
+  \item \textbf{FR3:} System must train a classification model.
+  \item \textbf{FR4:} System must output predictions on whether a passenger was transported.
+  \item \textbf{FR5:} System must export predictions to a CSV file.
+  \item \textbf{FR6:} System must read classification threshold, file paths, and hyperparameters from an external configuration file (`config.json`).
+  \item \textbf{FR7:} System must log errors and send alerts (e.g., via Slack or email) when critical failures occur.
+\end{itemize}
+
+\subsection{Non-Functional Requirements}
+\begin{itemize}
+  \item \textbf{NFR1:} Predictions must complete within 60 seconds for datasets under 1,000 rows.
+  \item \textbf{NFR2:} Model accuracy must exceed 80 % AUC on validation data.
+  \item \textbf{NFR3:} Data must remain secure and anonymized throughout processing.
+  \item \textbf{NFR4:} Code must follow PEP8 style guidelines.
+  \item \textbf{NFR5:} All critical errors must be logged and alerts sent within 5 minutes of detection.
+\end{itemize}
+
+\subsection{External Interface Requirements}
+\begin{itemize}
+  \item \textbf{User Interface:} Simple CLI or minimal web UI to specify input file and view status.
+  \item \textbf{Software Interfaces:} Python 3.x, ML libraries, Slack/email APIs for alerts.
+\end{itemize}
+
+\section{Appendices}
+\subsection{Appendix A: Future Enhancements}
+\begin{itemize}
+  \item Integrate with a richer web app for live input/output.
+  \item Add Docker deployment and orchestration definitions.
+\end{itemize}
+
+\subsection{Appendix B: Revision History}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Version & Date & Author & Description \\
+\hline
+1.0 & \today & Gauri Chahal & Initial SRS draft \\
+\hline
+1.1 & \today & Gauri Chahal & Added configuration management and logging requirements \\
+\hline
+\end{tabular}
+
+\end{document}

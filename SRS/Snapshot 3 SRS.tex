@@ -1,0 +1,155 @@
+\documentclass[15pt]{article}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Software Requirements Specification}
+\lhead{Titanic Space Ship AI Model}
+\rfoot{\thepage}
+
+\title{Software Requirements Specification (SRS)\\\large Spaceship Titanic AI Prediction System}
+\author{Team Name or Author(s)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+\subsection{Purpose}
+This document defines the functional and non-functional requirements for a machine learning–based system designed to predict whether a passenger aboard the Spaceship Titanic was transported to another dimension due to a spacetime anomaly.
+
+\subsection{Scope}
+The system will ingest spaceship passenger data, preprocess it, train a model using historical outcomes, generate predictions for new data, provide explainability, and present results on an interactive dashboard.
+
+\subsection{Definitions, Acronyms, and Abbreviations}
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|l|l|p{8cm}|}
+  \hline
+  \textbf{Acronym} & \textbf{Full Form}                       & \textbf{Description} \\
+  \hline
+  AI    & Artificial Intelligence                  & Systems that simulate human intelligence in machines. \\
+  ML    & Machine Learning                         & A subset of AI that enables models to learn from data. \\
+  CSV   & Comma-Separated Values                   & Common format for structured tabular data files. \\
+  CFG   & Configuration File                       & A JSON or YAML file specifying runtime parameters. \\
+  SHAP  & SHapley Additive exPlanations            & A method for explainable AI to attribute feature importance. \\
+  DASH  & Dash by Plotly                           & Framework for building interactive dashboards in Python. \\
+  API   & Application Programming Interface        & A set of rules allowing software components to communicate. \\
+  SRS   & Software Requirements Specification      & A document that describes what the system should do. \\
+  \hline
+  \end{tabular}
+  \caption{Acronyms and Abbreviations}
+\end{table}
+
+\subsection{References}
+\begin{itemize}
+  \item Kaggle Competition: \url{https://www.kaggle.com/competitions/spaceship-titanic/overview}
+  \item IEEE Standard for SRS: IEEE 830
+  \item Python Library Docs: \texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}, \texttt{shap}, \texttt{dash}
+\end{itemize}
+
+\subsection{Overview}
+This document outlines detailed requirements: system features, interfaces, constraints, and acceptance criteria, now including explainability and dashboard capabilities.
+
+\section{Overall Description}
+\subsection{Product Perspective}
+Standalone prediction system augmented with model explanability and interactive dashboard features.
+
+\subsection{Product Functions}
+\begin{itemize}
+  \item Load passenger data (CSV).
+  \item Preprocess data.
+  \item Train ML model.
+  \item Predict transported status.
+  \item Read runtime parameters from configuration file.
+  \item Log errors and send alerts.
+  \item Compute SHAP explainability reports (global & local).
+  \item Display results on an interactive Dash dashboard.
+\end{itemize}
+
+\subsection{User Classes and Characteristics}
+\begin{itemize}
+  \item \textbf{Data Scientists:} Maintain pipeline, interpret SHAP outputs.
+  \item \textbf{Rescue Analysts:} Use dashboard to prioritize rescue.
+  \item \textbf{Developers:} Extend system; add new explainability methods.
+\end{itemize}
+
+\subsection{Operating Environment}
+\begin{itemize}
+  \item Google Colab / Jupyter Notebook
+  \item Python 3.x
+  \item Modern browser (Chrome, Firefox) for Dash
+\end{itemize}
+
+\subsection{Design and Implementation Constraints}
+\begin{itemize}
+  \item Colab GPU/TPU session limits.
+  \item Data privacy and interstellar regulation compliance.
+  \item Dashboard performance: must paginate and cache large datasets.
+\end{itemize}
+
+\subsection{User Documentation}
+\begin{itemize}
+  \item README + extended user guide for explainability and dashboard usage.
+\end{itemize}
+
+\subsection{Assumptions and Dependencies}
+\begin{itemize}
+  \item Representative labeled data.
+  \item Working `config.json`.
+  \item Access to Slack/email for alerts.
+\end{itemize}
+
+\section{Specific Requirements}
+\subsection{Functional Requirements}
+\begin{itemize}
+  \item \textbf{FR1–FR7:} As in Snapshot 2.
+  \item \textbf{FR8:} System must compute SHAP global summary and local explanations for selected records.
+  \item \textbf{FR9:} System must host an interactive Dash dashboard to filter, visualize predictions and display SHAP plots.
+  \item \textbf{FR10:} Dashboard must allow exporting the current view to CSV or PNG.
+\end{itemize}
+
+\subsection{Non-Functional Requirements}
+\begin{itemize}
+  \item \textbf{NFR1–NFR5:} As in Snapshot 2.
+  \item \textbf{NFR6:} SHAP report generation must complete within 120 seconds for up to 5,000 records.
+  \item \textbf{NFR7:} Dashboard interactions (filter, threshold slide) must respond within 3 seconds.
+  \item \textbf{NFR8:} All code must adhere to PEP8 and dashboard UI styles.
+\end{itemize}
+
+\subsection{External Interface Requirements}
+\begin{itemize}
+  \item \textbf{User Interface:} Dash app at a known URL; CLI fallback.
+  \item \textbf{Software Interfaces:} Python 3.x, ML and SHAP libraries, Dash.
+\end{itemize}
+
+\section{Appendices}
+\subsection{Appendix A: Future Enhancements}
+\begin{itemize}
+  \item Add Docker-compose definitions for full stack.
+  \item Integrate real-time data streaming.
+  \item Implement alternative explainability (LIME).
+\end{itemize}
+
+\subsection{Appendix B: Revision History}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Version & Date & Author & Description \\
+\hline
+1.0 & \today & Gauri Chahal & Initial SRS draft \\
+\hline
+1.1 & \today & Gauri Chahal & Added configuration and logging requirements \\
+\hline
+1.2 & \today & Gauri Chahal & Added SHAP explainability and dashboard requirements \\
+\hline
+\end{tabular}
+
+\end{document}
