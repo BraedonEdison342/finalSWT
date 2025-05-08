@@ -1,0 +1,465 @@
+\documentclass[15pt]{article}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Software Design Document}
+\lhead{Titanic Space Ship AI Model }
+\rfoot{\thepage}
+
+\title{Software Design Document (SDD)\\\large Project Name}
+\author{Team Name or Author(s)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+\subsection{Purpose}
+Briefly describe the purpose of this document and the software being developed.
+
+\subsection{Scope}
+Overview of what the software will do. Mention primary functionality.
+
+\subsection{Definitions, Acronyms, and Abbreviations}
+List relevant definitions and terms.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|p{8cm}|}
+    \hline
+    \textbf{Acronym} & \textbf{Full Form} & \textbf{Description} \\
+    \hline
+    AI & Artificial Intelligence & Systems that simulate human intelligence in machines. \\
+    ML & Machine Learning & A subset of AI that enables models to learn from data. \\
+    CSV & Comma-Separated Values & Common format for structured tabular data files. \\
+    EDA & Exploratory Data Analysis & The process of visually and statistically analyzing data. \\
+    N/A & Not Available / Not Applicable & Often used to denote missing or undefined values. \\
+    ID & Identifier & A unique label used to distinguish data records. \\
+    ROC & Receiver Operating Characteristic & A plot used to assess binary classifier performance. \\
+    AUC & Area Under the Curve & Metric summarizing the ROC curve. \\
+    TP & True Positive & A correct prediction that the passenger was transported. \\
+    FP & False Positive & An incorrect prediction that the passenger was transported. \\
+    TN & True Negative & A correct prediction that the passenger was not transported. \\
+    FN & False Negative & An incorrect prediction that the passenger was not transported. \\
+    XGBoost & Extreme Gradient Boosting & A powerful tree-based machine learning algorithm. \\
+    SVM & Support Vector Machine & A machine learning algorithm for classification tasks. \\
+    NN & Neural Network & A model inspired by biological neural networks. \\
+    API & Application Programming Interface & A set of rules allowing software components to communicate. \\
+    GPU & Graphics Processing Unit & Often used to speed up training of ML models. \\
+    JSON & JavaScript Object Notation & A lightweight data format often used for data exchange. \\
+    UI & User Interface & Visual elements users interact with. \\
+    SDD & Software Design Document & A document that outlines the design of the software system. \\
+    SRS & Software Requirements Specification & A document that describes what the system should do. \\
+    \hline
+    \end{tabular}
+    \caption{Acronyms and Abbreviations}
+    \end{table}
+
+\subsection{References}
+\begin{itemize}
+    \item IEEE 1016-2009 Software Design Description
+    \item Any related SRS or technical documents
+    \item https://www.kaggle.com/competitions/spaceship-titanic/overview
+\end{itemize}
+
+\subsection{Overview}
+This Software Design Document (SDD) outlines the architecture and design of a machine learning system developed to predict which passengers aboard the Spaceship Titanic were transported to an alternate dimension following a spacetime anomaly.
+
+The document is organized as follows:
+
+\begin{itemize}
+    \item \textbf{System Overview:} Provides a high-level summary of the system’s purpose and functionality.
+    \item \textbf{Design Considerations:} Details assumptions, constraints, and development methodologies that influence the design.
+    \item \textbf{Architectural Design:} Describes the overall structure of the system, including system components, data flow, and interfaces.
+    \item \textbf{Detailed Design:} Explains the internal logic of major modules, including data preprocessing, model training, and prediction.
+    \item \textbf{Requirements Mapping:} Connects design elements back to the original project requirements.
+    \item \textbf{Appendices:} Includes supporting materials such as a glossary, revision history, and additional diagrams.
+\end{itemize}
+
+%WE SHOULD ADD SPECIFIC TEXT STACK IN FUTURE VERSIONS
+
+This document is intended for developers, data scientists, stakeholders, and rescue mission coordinators who will use or maintain the system.
+\section{System Overview}
+
+The system is a machine learning-based application designed to assist in the recovery mission of the Spaceship Titanic by predicting which passengers were transported to an alternate dimension during the incident. Using data recovered from the ship's damaged computer systems—including demographic information, travel details, and activity logs—the AI model classifies passengers based on their likelihood of having been affected by the spacetime anomaly.
+
+The core component of the system is a supervised learning model trained on labeled historical data. Once trained, the model can be deployed on a local computer or central server to analyze the entire passenger manifest and produce predictions in real-time or batch mode. 
+
+The system pipeline includes the following stages:
+\begin{itemize}
+    \item \textbf{Data Ingestion:} Load and parse passenger data from CSV files.
+    \item \textbf{Preprocessing:} Handle missing values, encode categorical variables, and normalize features.
+    \item \textbf{Model Training:} Train a classification model (e.g., XGBoost, Random Forest, or Neural Network) using labeled records.
+    \item \textbf{Prediction:} Generate predictions on unseen data to determine whether each passenger was transported.
+    \item \textbf{Output and Reporting:} Save predictions for further analysis or integration with rescue operations.
+\end{itemize}
+
+The goal of this system is to maximize prediction accuracy while ensuring scalability and interpretability, so it can be used effectively by both technical teams and mission coordinators.
+
+\section{Design Considerations}
+\subsection{Assumptions and Dependencies}
+The following assumptions and dependencies have been identified during the design of the system:
+
+\begin{itemize}
+    \item \textbf{CVAT (Computer Vision Annotation Tool)} will be used to manually label and annotate any raw or semi-structured passenger data that requires supervised learning inputs. Labeled data will be exported in a format compatible with the training environment.
+    
+    \item \textbf{Google Colab} will be the primary environment for developing and training the AI model. It provides a cloud-based Jupyter notebook interface with access to GPUs, which significantly accelerates model training.
+    
+    \item \textbf{Python 3.x} will be the main programming language, with libraries such as \texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}, and optionally \texttt{TensorFlow} or \texttt{PyTorch} used for data processing and model training.
+    
+    \item The recovered dataset from the Spaceship Titanic's computer systems is assumed to be mostly complete, with missing values handled during preprocessing.
+    
+    \item Final model artifacts (e.g., trained models in \texttt{.pkl} or \texttt{.h5} format) will be exported from Google Colab and run on a standard desktop or server for inference.
+    
+    \item It is assumed that there is no real-time data stream; predictions will be run in batch mode over the full dataset or user-specified subsets.
+    
+    \item Team members and operators interacting with the system will have basic familiarity with Python and Jupyter notebooks.
+    
+    \item All environments must have consistent package versions to ensure reproducibility of training and inference.
+\end{itemize}
+
+\subsection{General Constraints}
+\begin{itemize}
+    \item \textbf{Model Accuracy Limitation:} No machine learning model can guarantee 100\% prediction accuracy. The system is expected to make highly probable classifications, but some predictions may be incorrect due to limitations in the data and the nature of probabilistic modeling.
+    
+    \item \textbf{Hardware Constraints:} Model training is constrained by the computational resources available in the free tier of Google Colab, including limited GPU availability, memory, and session duration. These limitations may impact training time and restrict model complexity.
+    
+    \item \textbf{Data Privacy and Legal Compliance:} All processing of passenger data must comply with applicable interstellar data protection laws and ethical guidelines. Sensitive personal information must be handled with care, anonymized when appropriate, and not used in any way that violates privacy standards.
+    
+    \item \textbf{Data Quality Constraints:} The recovered passenger dataset may contain missing, inconsistent, or corrupted records due to damage sustained by the ship’s computer system. These limitations affect the quality and reliability of both training and predictions.
+    
+    \item \textbf{Offline Inference:} The trained model is expected to operate in an offline or batch inference mode. Real-time predictions are not supported in the current design due to compute and data availability constraints.
+    
+    \item \textbf{Dependency Constraints:} The system depends on third-party tools such as CVAT for annotation and Google Colab for training. Any downtime or change in their availability may impact the workflow.
+\end{itemize}
+
+
+\subsection{Goals and Guidelines}
+\section{Goals}
+
+The primary goal of this system is to identify and predict which passengers aboard the Spaceship Titanic were transported to an alternate dimension due to the spacetime anomaly. The system aims to aid rescue teams in efficiently prioritizing which passengers to attempt to retrieve from the alternate dimension.
+
+Key goals of the system include:
+
+\begin{itemize}
+    \item \textbf{Prediction Accuracy:} To accurately predict which passengers were transported based on available data and the trained AI model. While the model cannot guarantee 100\% accuracy, it should provide a reliable and actionable prediction for rescue teams.
+    
+    \item \textbf{Reliability:} The system should be robust, able to handle the full dataset, and provide consistent predictions with minimal downtime. It must operate reliably under the constraints of available hardware resources (such as those offered by Google Colab).
+    
+    \item \textbf{Timeliness:} Predictions should be generated quickly enough to support timely decision-making in the ongoing rescue operation. The system must handle batch predictions efficiently given the hardware limitations.
+    
+    \item \textbf{Actionable Output:} The system’s predictions should provide clear, interpretable results that are actionable by rescue teams, identifying passengers who are most likely to have been transported and need saving.
+    
+    \item \textbf{Scalability:} The solution should be designed in a way that can easily scale to handle larger datasets if necessary, such as future passenger lists from other interstellar voyages.
+\end{itemize}
+\subsection{Development Methods}
+\section{DevOps Strategy}
+
+The DevOps strategy for this AI-based project focuses on automation, collaboration, and continuous integration to ensure smooth development, testing, deployment, and maintenance of the system. Given the nature of the project, the system will rely on the following DevOps practices:
+
+\subsection{Version Control}
+
+\begin{itemize}
+    \item \textbf{Git and GitHub/GitLab:} Version control will be managed using Git. All code, model scripts, and documentation will be stored in a Git repository, ensuring collaboration and version history tracking.
+    \item \textbf{Branching Strategy:} A branching strategy such as Git Flow or feature-based branches will be used to manage development, with separate branches for development, staging, and production environments.
+\end{itemize}
+
+\subsection{Continuous Integration (CI)}
+
+\begin{itemize}
+    \item \textbf{GitHub Actions / GitLab CI:} Automated pipelines will be configured using GitHub Actions or GitLab CI to test the model code on every commit. These pipelines will run unit tests, linting, and validation checks to ensure code quality.
+    \item \textbf{Test Automation:} Unit tests for data preprocessing and model evaluation code will be implemented to ensure that changes do not break the functionality. Test coverage will be reported to maintain high-quality standards.
+    \item \textbf{Pre-Commit Hooks:} Pre-commit hooks will be set up to enforce code formatting (e.g., PEP8 for Python) and ensure the commit messages are consistent and meaningful.
+\end{itemize}
+
+\subsection{Continuous Deployment (CD)}
+
+\begin{itemize}
+    \item \textbf{Google Colab Deployment:} As the AI model will primarily be trained in Google Colab, the trained model files will be exported manually or through automation to the local deployment environment or server. Any new trained models will be versioned to ensure the best model is deployed.
+    \item \textbf{Model Export and Versioning:} The trained model will be saved and versioned as artifacts (e.g., in .pkl or .h5 format). Scripts to load and deploy the model will be part of the repository.
+    \item \textbf{Deployment to Batch Prediction System:} Post-training, the model will be deployed to a batch prediction system that processes the entire dataset or user-specified subsets. Predictions will be outputted in a format (e.g., CSV) that can be consumed by rescue mission teams.
+\end{itemize}
+
+\subsection{Monitoring and Logging}
+
+\begin{itemize}
+    \item \textbf{Model Performance Monitoring:} Although the system will operate offline, any updates to the model or deployment will be monitored through performance metrics such as prediction accuracy, false positives, and false negatives.
+    \item \textbf{Error Logging:} Logs will be maintained to track the performance of the model during prediction tasks, including any errors in the pipeline (e.g., missing data, failed predictions).
+    \item \textbf{Model Retraining Trigger:} When new data becomes available or significant discrepancies in predictions are detected, a retraining pipeline will be triggered. This will be automated within the GitHub Actions or GitLab CI/CD pipeline.
+\end{itemize}
+
+\subsection{Collaboration Tools}
+
+\begin{itemize}
+    \item \textbf{Slack / Teams:} Team communication will be facilitated via tools like Slack or Microsoft Teams to ensure collaboration across different parts of the project (development, data science, deployment).
+    \item \textbf{Jupyter Notebooks for Collaboration:} Google Colab’s Jupyter notebooks will be used for collaborative work, allowing team members to share, review, and modify training code, as well as explore and preprocess data together.
+\end{itemize}
+
+\subsection{Backup and Data Storage}
+
+\begin{itemize}
+    \item \textbf{Google Drive or Cloud Storage:} All important artifacts, including training datasets, model files, and logs, will be backed up to Google Drive or another secure cloud storage platform. This will ensure that the data is preserved and retrievable in case of system failure.
+    \item \textbf{Data Redundancy:} Redundancy measures will be taken to ensure that critical data is duplicated and available across multiple locations (e.g., cloud backups, Git repository).
+\end{itemize}
+
+\section{Architectural Design}
+\subsection{System Architecture}
+\section{System Architecture Design}
+
+This section provides an overview of the system’s architecture, outlining the various components, how they interact, and the flow of data through the system. The architecture is designed to support the training and inference processes for predicting which passengers aboard the Spaceship Titanic were transported to an alternate dimension.
+
+\subsection{High-Level Architecture}
+
+The system is based on a layered architecture, with distinct layers for data ingestion, preprocessing, model training, prediction, and output. The architecture is divided into the following key layers:
+
+\begin{itemize}
+    \item \textbf{Data Layer:} This layer is responsible for the collection and storage of the recovered spaceship data. Data includes passenger details, travel history, and system logs, which will be ingested from CSV files or APIs.
+    \item \textbf{Preprocessing Layer:} Raw data is cleaned, transformed, and prepared for training. Missing values are imputed, categorical variables are encoded, and features are normalized to ensure consistent input for the model.
+    \item \textbf{Model Training Layer:} The model is trained using labeled data, and various machine learning algorithms (e.g., XGBoost, Random Forest, or Neural Networks) are explored for optimal performance. This layer is primarily executed in Google Colab, which provides the computational resources for training the model.
+    \item \textbf{Inference Layer:} The trained model is used for batch predictions on the passenger data. The system outputs predictions that indicate whether passengers are likely to have been transported to an alternate dimension.
+    \item \textbf{Output Layer:} The predicted results are stored in a structured format (e.g., CSV) and can be provided to the rescue mission teams for further analysis. The output is also available for visualizations or dashboards if needed.
+\end{itemize}
+
+\subsection{Detailed Architecture}
+
+The following diagram illustrates the system's architecture and the interactions between the various layers:
+
+\begin{figure}[h!]
+    \centering
+    %\includegraphics[width=0.8\textwidth]{architecture-diagram.png}
+    % WE NEED TO ADD ARCHITECTURE DIAGRAM LATER
+    \caption{System Architecture Overview}
+    \label{fig:architecture}
+\end{figure}
+
+The key components and data flow can be summarized as follows:
+
+\begin{itemize}
+    \item \textbf{Data Ingestion:} The spaceship’s recovered dataset is ingested into the system through manual file upload or automated scripts that pull data from a central repository (e.g., cloud storage or local file system).
+    \item \textbf{Preprocessing:} Raw data is cleaned and preprocessed using Python scripts. Missing or inconsistent values are handled, and feature engineering is performed to prepare the dataset for training.
+    \item \textbf{Model Training:} In Google Colab, we train the AI model on the preprocessed data using popular machine learning libraries (e.g., \texttt{scikit-learn}, \texttt{XGBoost}, or \texttt{TensorFlow}). The trained model is exported for deployment.
+    \item \textbf{Model Inference:} Once the model is deployed, it processes new data, making predictions on which passengers were transported to the alternate dimension. The model’s predictions are generated in batch mode and stored for analysis.
+    \item \textbf{Output and Reporting:} The output predictions are saved in a CSV file and can be provided to the rescue teams. Visualizations of model performance or predictions (such as dashboards or charts) may also be generated for decision-makers.
+\end{itemize}
+
+\subsection{Key Technologies Used}
+\begin{itemize}
+    \item \textbf{Google Colab:} Used for training the machine learning model, utilizing GPU/TPU resources.
+    \item \textbf{CVAT:} The Computer Vision Annotation Tool (CVAT) is used for labeling any relevant data to be included in the training process.
+    \item \textbf{Python 3.x:} The primary programming language for data processing, model training, and inference.
+    \item \textbf{scikit-learn / XGBoost:} Libraries for training the machine learning model.
+    \item \textbf{pandas, numpy:} Used for data manipulation and preprocessing tasks.
+\end{itemize}
+
+\subsection{Component Design}
+\section{Component Design}
+
+This section provides a detailed design for each component involved in the system, particularly focusing on the AI model, its algorithm, and the necessary preprocessing and training components.
+
+\subsection{AI Model Component}
+
+The AI model used in this project is based on the **XGBoost (Extreme Gradient Boosting)** algorithm, a highly efficient and scalable implementation of gradient boosting. XGBoost is particularly suitable for structured data, like the passenger data, and can handle a large number of features effectively.
+
+\subsubsection{XGBoost Algorithm}
+
+XGBoost works by combining the predictions of many base learners (decision trees), with each successive model trained to correct the errors of its predecessors. The primary mechanism behind the algorithm is **gradient boosting**, where models are trained in a stage-wise manner. At each stage, the model minimizes the residuals (errors) from the previous stage.
+
+\begin{itemize}
+    \item \textbf{Objective Function:} The objective function is the sum of a loss function (such as log loss or mean squared error) and a regularization term that penalizes complex models to avoid overfitting.
+    \item \textbf{Base Learner:} The base learner is a decision tree, which is optimized at each stage to minimize the loss.
+    \item \textbf{Boosting Strategy:} Trees are added sequentially, with each new tree aimed at reducing the residual errors of previous ones.
+\end{itemize}
+
+\subsubsection{Key Hyperparameters}
+
+The key hyperparameters for tuning the XGBoost model include:
+
+\begin{itemize}
+    \item \textbf{Learning Rate (eta):} Controls the contribution of each tree to the final model. A lower learning rate generally leads to better generalization but requires more trees.
+    \item \textbf{Number of Trees (n\_estimators):} The total number of trees to be added in the boosting process.
+    \item \textbf{Maximum Depth (max\_depth):} The maximum depth of the decision trees. This controls the complexity of each individual tree.
+    \item \textbf{Subsample:} The fraction of samples to be used for training each tree. This helps prevent overfitting.
+    \item \textbf{Colsample\_bytree:} The fraction of features to be used for each tree.
+\end{itemize}
+
+\subsection{Preprocessing Component}
+
+Before the data is fed into the model, it undergoes preprocessing to ensure it is clean and ready for training.
+
+\begin{itemize}
+    \item \textbf{Handling Missing Values:} Any missing data in the dataset is handled by imputation, either using the mean, median, or a model-based approach depending on the feature type.
+    \item \textbf{Feature Scaling:} Continuous variables are scaled to ensure that no feature dominates the others, especially for distance-based algorithms. However, XGBoost is generally less sensitive to feature scaling.
+    \item \textbf{Feature Encoding:} Categorical variables are encoded into numerical values using techniques such as one-hot encoding or label encoding, depending on the type of categorical feature.
+    \item \textbf{Outlier Removal:} Any extreme outliers are identified and either removed or adjusted to prevent them from skewing the model.
+\end{itemize}
+
+\subsection{Model Training Component}
+
+The model training component focuses on training the XGBoost model on the preprocessed data.
+
+\subsubsection{Optimizer:}
+
+XGBoost uses **Gradient Descent** as the optimizer, which is applied to minimize the objective function (the loss function plus regularization). The optimization process is done iteratively, with each decision tree trained to minimize residual errors from the previous stage.
+
+\begin{itemize}
+    \item \textbf{Objective Function:} For binary classification tasks (like this one, where the task is to predict whether a passenger was transported to another dimension), we will use the **log loss** function, which is commonly used for binary classification problems.
+    \item \textbf{Regularization:} To avoid overfitting, XGBoost includes a regularization term in the objective function, penalizing more complex models.
+    \item \textbf{Learning Rate:} The learning rate determines how quickly the model converges. A lower rate typically leads to more accurate results but requires more iterations.
+\end{itemize}
+
+\subsubsection{Training Process:}
+
+The training process will include the following steps:
+\begin{itemize}
+    \item Split the dataset into training and validation sets (10\% training, 10\% validation).
+    \item Train the model using the training data, iterating over the dataset multiple times (epochs) and adjusting the model parameters to minimize the objective function.
+    \item Monitor the model’s performance on the validation set during training to prevent overfitting.
+\end{itemize}
+
+\subsection{Model Evaluation Component}
+
+After training, the model is evaluated using appropriate metrics to assess its accuracy and generalization ability.
+
+\begin{itemize}
+    \item \textbf{Accuracy:} The percentage of correct predictions (i.e., the number of true positives and true negatives divided by the total number of predictions).
+    \item \textbf{Confusion Matrix:} To understand the performance in more detail, especially for binary classification, a confusion matrix will be used to show the counts of true positives, false positives, true negatives, and false negatives.
+    \item \textbf{ROC-AUC Score:} The area under the receiver operating characteristic (ROC) curve is a performance measurement for classification problems. A higher AUC score indicates a better-performing model.
+\end{itemize}
+\subsection{Data Design}
+The data design for this project consists of both the database schema and the data structures used in the AI model.
+
+\subsubsection{Database Schema}
+The database stores the following key information about each passenger:
+\begin{itemize}
+    \item \textbf{Passenger ID:} A unique identifier for each passenger.
+    \item \textbf{Passenger Attributes:} Features like age, gender, ticket type, and location.
+    \item \textbf{Transported:} A binary indicator of whether the passenger was transported to the alternate dimension (target label).
+    \item \textbf{Collision Details:} Time and coordinates of the spaceship's encounter with the anomaly.
+    \item \textbf{Additional Metadata:} Any additional data or sensor readings that might be relevant.
+\end{itemize}
+
+\subsubsection{Data Structures}
+The data structures used for processing the passenger data include:
+\begin{itemize}
+    \item \textbf{Pandas DataFrame:} Used for data manipulation, cleaning, and feature extraction.
+    \item \textbf{NumPy Arrays:} Used for efficient numerical computations, particularly when training the AI model.
+    \item \textbf{Dictionaries:} Used for storing mappings of parameters and their corresponding values, such as hyperparameters for the XGBoost model.
+\end{itemize}
+
+\subsection{Interface Design}
+\begin{itemize}
+    \item \textbf{User Interfaces:} 
+    \begin{itemize}
+        \item The user interface is designed to allow the user to input data about each passenger (such as their age, gender, and other attributes) and get predictions on whether they were transported to the alternate dimension. This will be a simple web interface built with Django, and it will be responsive and easy to use.
+    \end{itemize}
+    
+    \item \textbf{Hardware Interfaces:} 
+    \begin{itemize}
+        \item The system will interface with the hardware components of the spaceship for real-time data collection. This includes sensors for capturing the spatial coordinates of the anomaly and passenger monitoring systems that track the condition of passengers.
+    \end{itemize}
+
+    \item \textbf{Software Interfaces:} 
+    \begin{itemize}
+        \item The software will interact with several libraries and APIs. Notably, it will use the Python libraries:
+        \begin{itemize}
+            \item \texttt{XGBoost}: For training the machine learning model.
+            \item \texttt{Pandas} and \texttt{NumPy}: For data processing and manipulation.
+            \item \texttt{Django}: For building the web interface.
+            \item \texttt{Google Colab API}: For interacting with Colab during model training.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Communication Interfaces:} 
+    \begin{itemize}
+        \item The system communicates using standard HTTP/HTTPS protocols for web-based communication. It also uses WebSocket for real-time updates on the prediction results.
+        \item For data transfer between the spaceship and the control system, a custom communication protocol will be employed, ensuring that passenger data is securely transmitted.
+    \end{itemize}
+\end{itemize}
+
+\section{Detailed Design}
+
+\subsection{Model Training Module}
+\begin{itemize}
+    \item \textbf{Description:} This module handles the training of the XGBoost model using labeled data of passengers. It performs the necessary data preprocessing, splits the data into training and validation sets, and trains the model to predict the probability of a passenger being transported to another dimension.
+    \item \textbf{Inputs/Outputs:} 
+    \begin{itemize}
+        \item Inputs: Preprocessed passenger data (features such as age, gender, etc.).
+        \item Outputs: A trained XGBoost model that can predict the transport probability for new passengers.
+    \end{itemize}
+    \item \textbf{Algorithms or Logic:} 
+    \begin{itemize}
+        \item The XGBoost model is trained using gradient boosting, where each new decision tree corrects the residuals from previous trees. Hyperparameters such as learning rate, max depth, and number of trees are optimized through cross-validation.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Prediction Module}
+\begin{itemize}
+    \item \textbf{Description:} This module takes the trained XGBoost model and uses it to make predictions for incoming passenger data. The model's output is a probability that the passenger has been transported to the alternate dimension.
+    \item \textbf{Inputs/Outputs:} 
+    \begin{itemize}
+        \item Inputs: New passenger data (age, gender, etc.).
+        \item Outputs: Prediction probability of whether the passenger was transported or not.
+    \end{itemize}
+    \item \textbf{Algorithms or Logic:} 
+    \begin{itemize}
+        \item The prediction is made by passing the new passenger data through the trained XGBoost model. The output is a probability, and a threshold is applied to classify the passenger as either "transported" or "not transported."
+    \end{itemize}
+\end{itemize}
+
+\subsection{User Interface Module}
+\begin{itemize}
+    \item \textbf{Description:} This module handles the web-based user interface that allows users to input data and receive predictions.
+    \item \textbf{Inputs/Outputs:} 
+    \begin{itemize}
+        \item Inputs: Passenger data input through web forms (age, gender, etc.).
+        \item Outputs: Prediction results displayed on the web interface, including a confidence score.
+    \end{itemize}
+    \item \textbf{Algorithms or Logic:} 
+    \begin{itemize}
+        \item The form input is sent to the backend via an HTTP request. The backend uses the trained model to make predictions and sends the result back to the frontend for display.
+    \end{itemize}
+\end{itemize}
+
+\section{Requirements Mapping}
+This section traces the design elements back to the requirements defined in the Software Requirements Specification (SRS).
+
+\begin{itemize}
+    \item The training module fulfills the requirement to predict whether a passenger has been transported.
+    \item The prediction module ensures real-time predictions based on user input.
+    \item The user interface meets the requirement of a user-friendly and interactive web-based interface.
+    \item The system complies with the data privacy and security requirements defined in the SRS.
+\end{itemize}
+
+\section{Appendices}
+
+\subsection{Appendix A: Glossary}
+
+\begin{itemize}
+    \item \textbf{AI Model:} An artificial intelligence model used to predict outcomes based on historical data.
+    \item \textbf{XGBoost:} A powerful gradient boosting algorithm used for classification tasks.
+    \item \textbf{Transported:} A binary label indicating whether a passenger has been transported to another dimension by the anomaly.
+    \item \textbf{Preprocessing:} The process of cleaning and preparing data for machine learning.
+    \item \textbf{Feature:} A characteristic or attribute of the data used to train the model.
+    \item \textbf{Validation Set:} A subset of the data used to evaluate the model's performance during training.
+    \item \textbf{Training Set:} The subset of data used to train the machine learning model.
+    \item \textbf{Hyperparameter Tuning:} The process of selecting the optimal values for the model's hyperparameters.
+\end{itemize}
+\subsection{Appendix B: Revision History}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Version & Date & Author & Description \\
+\hline
+1.0 & \today & Jasmine Pineda & Initial draft \\
+\hline
+\end{tabular}
+
+\end{document}
