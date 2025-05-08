@@ -12,7 +12,7 @@
 \lhead{Titanic Space Ship AI Model}
 \rfoot{\thepage}
 
-\title{Software Requirements Specification (SRS)\\\large Spaceship Titanic AI Prediction System}
+\title{Software Requirements Specification (SRS)\\\large Spaceship Titanic AI Prediction System — Snapshot 3}
 \author{Team Name or Author(s)}
 \date{\today}
 
@@ -23,27 +23,38 @@
 \newpage
 
 \section{Introduction}
+
 \subsection{Purpose}
-This document defines the functional and non-functional requirements for a machine learning–based system designed to predict whether a passenger aboard the Spaceship Titanic was transported to another dimension due to a spacetime anomaly.
+This document defines the functional and non-functional requirements for the enhanced Spaceship Titanic AI Prediction System, including explainability via SHAP values and an interactive Dash dashboard.
 
 \subsection{Scope}
-The system will ingest spaceship passenger data, preprocess it, train a model using historical outcomes, generate predictions for new data, provide explainability, and present results on an interactive dashboard.
+The system will:
+\begin{itemize}
+  \item Ingest passenger CSV data.
+  \item Preprocess the data (impute missing values, encode categoricals, normalize).
+  \item Train and validate a classification model.
+  \item Generate predictions for new data.
+  \item Read runtime parameters from \texttt{config.json}.
+  \item Log errors and dispatch alerts on failures.
+  \item Compute SHAP global and local explanations.
+  \item Host an interactive Dash dashboard with filtering, visualization, and export capabilities.
+\end{itemize}
 
 \subsection{Definitions, Acronyms, and Abbreviations}
 \begin{table}[h!]
   \centering
   \begin{tabular}{|l|l|p{8cm}|}
   \hline
-  \textbf{Acronym} & \textbf{Full Form}                       & \textbf{Description} \\
+  \textbf{Acronym} & \textbf{Full Form}                   & \textbf{Description} \\
   \hline
-  AI    & Artificial Intelligence                  & Systems that simulate human intelligence in machines. \\
-  ML    & Machine Learning                         & A subset of AI that enables models to learn from data. \\
-  CSV   & Comma-Separated Values                   & Common format for structured tabular data files. \\
-  CFG   & Configuration File                       & A JSON or YAML file specifying runtime parameters. \\
-  SHAP  & SHapley Additive exPlanations            & A method for explainable AI to attribute feature importance. \\
-  DASH  & Dash by Plotly                           & Framework for building interactive dashboards in Python. \\
-  API   & Application Programming Interface        & A set of rules allowing software components to communicate. \\
-  SRS   & Software Requirements Specification      & A document that describes what the system should do. \\
+  AI       & Artificial Intelligence              & Simulated human intelligence in machines. \\
+  ML       & Machine Learning                     & Algorithms that learn from data. \\
+  CSV      & Comma-Separated Values               & Standard tabular data file format. \\
+  CFG      & Configuration File                   & JSON/YAML file specifying runtime parameters. \\
+  SHAP     & SHapley Additive exPlanations        & Method for explaining model outputs. \\
+  DASH     & Dash by Plotly                       & Python framework for interactive dashboards. \\
+  API      & Application Programming Interface    & Interface for system components to communicate. \\
+  SRS      & Software Requirements Specification  & Document detailing system requirements. \\
   \hline
   \end{tabular}
   \caption{Acronyms and Abbreviations}
@@ -51,104 +62,139 @@ The system will ingest spaceship passenger data, preprocess it, train a model us
 
 \subsection{References}
 \begin{itemize}
-  \item Kaggle Competition: \url{https://www.kaggle.com/competitions/spaceship-titanic/overview}
-  \item IEEE Standard for SRS: IEEE 830
-  \item Python Library Docs: \texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}, \texttt{shap}, \texttt{dash}
+  \item Kaggle Spaceship Titanic Competition Overview: \url{https://www.kaggle.com/competitions/spaceship-titanic/overview}
+  \item IEEE SRS Standard: IEEE 830
+  \item Python Libraries: \texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}, \texttt{shap}, \texttt{dash}
 \end{itemize}
 
 \subsection{Overview}
-This document outlines detailed requirements: system features, interfaces, constraints, and acceptance criteria, now including explainability and dashboard capabilities.
+This SRS snapshot details all system functions, quality attributes, and interface requirements, with no omissions.
 
 \section{Overall Description}
+
 \subsection{Product Perspective}
-Standalone prediction system augmented with model explanability and interactive dashboard features.
+An enhanced standalone ML system with built-in explainability and visualization to aid rescue teams.
 
 \subsection{Product Functions}
-\begin{itemize}
-  \item Load passenger data (CSV).
-  \item Preprocess data.
-  \item Train ML model.
-  \item Predict transported status.
-  \item Read runtime parameters from configuration file.
-  \item Log errors and send alerts.
-  \item Compute SHAP explainability reports (global & local).
-  \item Display results on an interactive Dash dashboard.
-\end{itemize}
+\begin{enumerate}[label=\textbullet]
+  \item Load passenger data from a CSV file.
+  \item Preprocess data: handle missing values, encode categorical features, normalize numeric features.
+  \item Train and validate a classification model (e.g., XGBoost) on cleaned data.
+  \item Read classification threshold, file paths, and hyperparameters from \texttt{config.json}.
+  \item Generate predictions for new passenger data.
+  \item Log any errors in preprocessing, training, or inference.
+  \item Send alerts (Slack/email) when critical failures occur.
+  \item Compute SHAP global feature importance and generate local force-plots for individual predictions.
+  \item Launch an interactive Dash dashboard that displays:
+    \begin{itemize}
+      \item Summary cards (accuracy, precision, recall, F1).
+      \item Time-series of batch run metrics.
+      \item Filterable, paginated table of predictions.
+      \item Embedded SHAP global summary plot.
+      \item Controls (threshold slider, date selector).
+    \end{itemize}
+  \item Allow users to export the current dashboard view as CSV or PNG.
+\end{enumerate}
 
 \subsection{User Classes and Characteristics}
 \begin{itemize}
-  \item \textbf{Data Scientists:} Maintain pipeline, interpret SHAP outputs.
-  \item \textbf{Rescue Analysts:} Use dashboard to prioritize rescue.
-  \item \textbf{Developers:} Extend system; add new explainability methods.
+  \item \textbf{Data Scientists:} Configure pipelines, interpret SHAP outputs.
+  \item \textbf{Rescue Analysts:} Use dashboard to prioritize rescue efforts.
+  \item \textbf{Developers:} Extend features and maintain code.
 \end{itemize}
 
 \subsection{Operating Environment}
 \begin{itemize}
-  \item Google Colab / Jupyter Notebook
-  \item Python 3.x
-  \item Modern browser (Chrome, Firefox) for Dash
+  \item Python 3.8+ (Colab or local).
+  \item Modern web browser (Chrome, Firefox) for Dash.
+  \item Internet access for library installation.
 \end{itemize}
 
 \subsection{Design and Implementation Constraints}
 \begin{itemize}
-  \item Colab GPU/TPU session limits.
-  \item Data privacy and interstellar regulation compliance.
-  \item Dashboard performance: must paginate and cache large datasets.
+  \item GPU/TPU session limits in Google Colab.
+  \item Data must comply with interstellar privacy regulations.
+  \item Consistent package versions enforced via \texttt{requirements.txt}.
 \end{itemize}
 
 \subsection{User Documentation}
 \begin{itemize}
-  \item README + extended user guide for explainability and dashboard usage.
+  \item \texttt{README.md} with setup and run instructions.
+  \item Detailed user guide describing dashboard features and configuration.
 \end{itemize}
 
 \subsection{Assumptions and Dependencies}
 \begin{itemize}
-  \item Representative labeled data.
-  \item Working `config.json`.
-  \item Access to Slack/email for alerts.
+  \item Input CSVs follow the specified schema.
+  \item \texttt{config.json} is correctly formatted and present.
+  \item Slack/email credentials configured for alerts.
 \end{itemize}
 
 \section{Specific Requirements}
+
 \subsection{Functional Requirements}
-\begin{itemize}
-  \item \textbf{FR1–FR7:} As in Snapshot 2.
-  \item \textbf{FR8:} System must compute SHAP global summary and local explanations for selected records.
-  \item \textbf{FR9:} System must host an interactive Dash dashboard to filter, visualize predictions and display SHAP plots.
-  \item \textbf{FR10:} Dashboard must allow exporting the current view to CSV or PNG.
-\end{itemize}
+
+\begin{enumerate}[label=\textbf{FR\arabic*:}, leftmargin=3em]
+  \item \textbf{Load Data.} The system shall load a CSV file containing passenger records, with columns for all required features (e.g., Age, VIP status, Destination, etc.).
+  \item \textbf{Preprocess Data.} The system shall handle missing values by imputation (mean for numeric, mode for categorical), encode categorical variables using one-hot encoding or label encoding as specified, and normalize numeric features to zero mean and unit variance.
+  \item \textbf{Train Model.} The system shall train a classification model (e.g., XGBoost) using cleaned historical data, performing cross-validation and hyperparameter tuning via grid search or Bayesian optimization.
+  \item \textbf{Configuration Management.} The system shall read runtime parameters—including classification threshold, file paths, learning rate, number of estimators—from an external JSON file named \texttt{config.json}.
+  \item \textbf{Generate Predictions.} The system shall apply the trained model to new data records, outputting a probability score and binary transported/not-transported label based on the configured threshold.
+  \item \textbf{Export Results.} The system shall export prediction results—including Passenger ID, probability, and label—to a CSV file in a configured output directory.
+  \item \textbf{Error Logging \& Alerts.} The system shall log all critical errors during ingestion, preprocessing, training, and inference in a logfile, and send an immediate alert via Slack or email when any error of severity “critical” occurs.
+  \item \textbf{Explainability with SHAP.} The system shall compute SHAP global feature importance summaries and local force-plots for each prediction, and save these visualizations as an HTML report.
+  \item \textbf{Dashboard Hosting.} The system shall host an interactive Dash dashboard that includes:
+    \begin{enumerate}[label=\alph*)]
+      \item Summary cards showing overall model accuracy, precision, recall, and F1 score.
+      \item A time-series chart plotting batch run metrics over time.
+      \item A filterable and paginated table of individual predictions.
+      \item An embedded SHAP global summary bar chart.
+      \item Controls for adjusting the classification threshold and selecting the batch date.
+    \end{enumerate}
+  \item \textbf{Dashboard Export.} The system shall provide buttons to export the currently displayed table and charts as CSV and PNG files, respectively.
+\end{enumerate}
 
 \subsection{Non-Functional Requirements}
-\begin{itemize}
-  \item \textbf{NFR1–NFR5:} As in Snapshot 2.
-  \item \textbf{NFR6:} SHAP report generation must complete within 120 seconds for up to 5,000 records.
-  \item \textbf{NFR7:} Dashboard interactions (filter, threshold slide) must respond within 3 seconds.
-  \item \textbf{NFR8:} All code must adhere to PEP8 and dashboard UI styles.
-\end{itemize}
+
+\begin{enumerate}[label=\textbf{NFR\arabic*:}, leftmargin=3em]
+  \item \textbf{Performance.} The system shall complete data preprocessing, model inference, and SHAP computation within 120 seconds for datasets up to 5,000 records.
+  \item \textbf{Responsiveness.} Dashboard interactions (filtering, threshold adjustments) shall respond within 3 seconds.
+  \item \textbf{Accuracy.} The trained model shall achieve at least 80\% AUC on a held-out validation set.
+  \item \textbf{Scalability.} The system shall scale to handle up to 20,000 records in batch mode without requiring architectural changes.
+  \item \textbf{Security.} All data at rest and in transit shall be encrypted; sensitive information must be anonymized.
+  \item \textbf{Reliability.} The system shall log all errors and dispatch alerts within 5 minutes of occurrence.
+  \item \textbf{Maintainability.} All source code shall conform to PEP8 style guidelines and include unit tests covering at least 80\% of the logic.
+  \item \textbf{Usability.} The dashboard UI shall be intuitive, with clear labels, tooltips on controls, and mobile-friendly layout.
+\end{enumerate}
 
 \subsection{External Interface Requirements}
+
 \begin{itemize}
-  \item \textbf{User Interface:} Dash app at a known URL; CLI fallback.
-  \item \textbf{Software Interfaces:} Python 3.x, ML and SHAP libraries, Dash.
+  \item \textbf{User Interface:} A Dash web application accessible at a configurable URL; CLI fallback for headless operation.
+  \item \textbf{Software Interfaces:} 
+    \begin{itemize}
+      \item Python 3.x runtime.
+      \item \texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}, \texttt{shap}, \texttt{dash}.
+      \item Slack Webhook or SMTP server for alerts.
+    \end{itemize}
+  \item \textbf{Hardware Interfaces:} None—cloud-based or local environment only.
 \end{itemize}
 
 \section{Appendices}
+
 \subsection{Appendix A: Future Enhancements}
 \begin{itemize}
-  \item Add Docker-compose definitions for full stack.
-  \item Integrate real-time data streaming.
-  \item Implement alternative explainability (LIME).
+  \item Containerize the entire stack with Docker Compose for seamless deployment.
+  \item Add support for real-time streaming ingestion via Kafka.
+  \item Integrate alternative explainability methods (e.g., LIME) alongside SHAP.
 \end{itemize}
 
 \subsection{Appendix B: Revision History}
 \begin{tabular}{|l|l|l|l|}
 \hline
-Version & Date & Author & Description \\
+Version & Date   & Author       & Description                                        \\
 \hline
-1.0 & \today & Gauri Chahal & Initial SRS draft \\
-\hline
-1.1 & \today & Gauri Chahal & Added configuration and logging requirements \\
-\hline
-1.2 & \today & Gauri Chahal & Added SHAP explainability and dashboard requirements \\
+1.0     & \today & Gauri Chahal & Initial SRS Snapshot 3 draft                        \\
 \hline
 \end{tabular}
 
