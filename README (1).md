@@ -1,4 +1,5 @@
 # Spaceship Titanic AI Prediction System
+Jira: https://braedonedison0305.atlassian.net/jira/software/projects/SPACESHIP/boards/105/backlog
 
 **Project Board & Contact**  
 For full task tracking, issue reporting, and sprint planning, visit our Jira site at: https://yourcompany.atlassian.net/projects/SPACESHIP. You can create tickets there for bugs, feature requests, or general questions, and monitor development progress in real time.
