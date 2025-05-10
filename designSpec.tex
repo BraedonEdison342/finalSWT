@@ -1,0 +1,129 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{amsmath}
+
+\geometry{margin=1in}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\title{Design Specification Document: Spaceship Titanic AI Rescue System}
+\author{Your Team Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This document outlines the design specification for the AI-based system that will predict which passengers from the Spaceship Titanic were transported to an alternate dimension. The system uses an XGBoost model trained on spacecraft data and is deployable via Docker for reproducibility and scalability.
+
+\section{System Overview}
+\begin{itemize}
+    \item The system consists of three core components:
+    \begin{enumerate}
+        \item Data labeling and preprocessing (CVAT, Pandas)
+        \item Model training and prediction (XGBoost on Google Colab)
+        \item Web interface for input/output (Django frontend/backend)
+    \end{enumerate}
+    \item The trained model will run in a Docker container for deployment.
+\end{itemize}
+
+\section{Page/Component Breakdown}
+
+\subsection{1. Data Preprocessing}
+\begin{itemize}
+    \item Tool: Google Colab / Python script
+    \item Libraries: \texttt{pandas}, \texttt{numpy}, \texttt{scikit-learn}
+    \item Input: Raw CSV data (e.g., passenger.csv)
+    \item Output: Cleaned dataset ready for training
+\end{itemize}
+
+\subsection{2. Labeling Tool}
+\begin{itemize}
+    \item Tool: CVAT
+    \item Purpose: Label or reverify transport classification (if necessary for visual datasets)
+    \item Output: Labeled JSON/CSV annotations
+\end{itemize}
+
+\subsection{3. AI Model Training}
+\begin{itemize}
+    \item Tool: Google Colab
+    \item Libraries:
+    \begin{itemize}
+        \item \texttt{xgboost}
+        \item \texttt{sklearn}
+        \item \texttt{optuna} (for hyperparameter tuning)
+    \end{itemize}
+    \item Input: Cleaned data
+    \item Output: Saved model (\texttt{model.pt})
+\end{itemize}
+
+\subsection{4. Model Deployment}
+\begin{itemize}
+    \item Tool: Docker
+    \item Base Image: \texttt{python:3.10-slim}
+    \item Script: Loads model and exposes REST API using Flask or Django
+    \item Endpoint: \texttt{/predict}
+\end{itemize}
+
+\subsection{5. Web Interface}
+\begin{itemize}
+    \item Framework: Django
+    \item Pages:
+    \begin{itemize}
+        \item \textbf{Home Page}: Overview of project
+        \item \textbf{Upload Page}: Upload passenger data
+        \item \textbf{Results Page}: View prediction result
+    \end{itemize}
+\end{itemize}
+
+\section{Dependencies for Docker Container}
+
+\subsection{Python Packages}
+\begin{lstlisting}[language=bash]
+pandas==2.2.0
+numpy==1.26.4
+scikit-learn==1.4.2
+xgboost==2.0.3
+flask==3.0.2 
+joblib==1.4.2
+optuna==3.5.0
+\end{lstlisting}
+
+\subsection{System Packages}
+\begin{lstlisting}[language=bash]
+FROM python:3.10-slim
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    curl
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app
+WORKDIR /app
+
+CMD ["python", "app.py"]  # Or manage.py if using Django
+\end{lstlisting}
+
+\section{Optional Tools Used}
+\begin{itemize}
+    \item \textbf{CVAT}: Used for manual image/video annotation if needed.
+    \item \textbf{Google Colab}: Used for rapid prototyping and GPU acceleration during training.
+    \item \textbf{GitHub}: Source code management and CI/CD pipeline.
+\end{itemize}
+
+\section{Conclusion}
+This design spec outlines every page, module, and dependency for the AI-powered Spaceship Titanic prediction system. With proper Docker containerization, this system can be reproduced and deployed on any compatible host with minimal configuration.
+
+\end{document}
